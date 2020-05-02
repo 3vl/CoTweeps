@@ -10,9 +10,4 @@ public func routes(_ router: Router) throws {
             try req.view().render("followers", view)
         }
     }
-    
-    router.get("test") {req in
-        try req.view().render("followers", ["screenName":"Bozo"])
-    }
-
 }

@@ -6,11 +6,11 @@
         <h1>#(screenName)</h1>
         <ul>
             #for(u in userCursor.users) {
-                <li>@#(u.screen_name) #(u.name)</li>
+                <li>@#(u.screenName) (#(u.id)) #(u.name)</li>
             }
         </ul>
         <p>
-            #(userCursor.next_cursor)
+            #(userCursor.nextCursor)
         </p>
     </body>
 </html>

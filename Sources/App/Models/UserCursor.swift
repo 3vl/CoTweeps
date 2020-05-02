@@ -7,14 +7,14 @@
 
 import Vapor
 
-final class UserCursor {
-    var next_cursor : Int64
-    var previous_cursor: Int64
+final class UserCursor  {
+    var nextCursor : Int64
+    var previousCursor: Int64
     var users : [User] 
     
-    init(next_cursor : Int64, previous_cursor : Int64, users : [User]) {
-        self.next_cursor = next_cursor
-        self.previous_cursor = previous_cursor
+    init(nextCursor : Int64, previousCursor : Int64, users : [User]) {
+        self.nextCursor = nextCursor
+        self.previousCursor = previousCursor
         self.users = users
     }
 }

@@ -9,6 +9,7 @@ import Vapor
 final class CoTweepsController {
     func followersOf(_ req : Request) throws -> Future<UserCursor> {
         let twitter = try req.make(TwitterClient.self)
-        return try twitter.followersOf("3vl")
+        let screenName = try req.parameters.next(String.self)
+        return try twitter.followersOf(screenName)
     }
 }

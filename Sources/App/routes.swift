@@ -5,5 +5,7 @@ import Vapor
 public func routes(_ router: Router) throws {
     let coTweepsController = CoTweepsController()
     
-    router.get("followers", use: coTweepsController.followersOf)
+    router.get("users", String.parameter, "followers") {
+        req in try coTweepsController.followersOf(req)
+    }
 }

@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <title>Followers of #{screenName}</title>
+    </head>
+    <body>
+        <h1>#(screenName)</h1>
+        <ul>
+            #for(u in userCursor.users) {
+                <li>@#(u.screen_name) #(u.name)</li>
+            }
+        </ul>
+        <p>
+            #(userCursor.next_cursor)
+        </p>
+    </body>
+</html>

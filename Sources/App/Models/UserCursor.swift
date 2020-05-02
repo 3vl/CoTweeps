@@ -17,7 +17,6 @@ final class UserCursor {
         self.previous_cursor = previous_cursor
         self.users = users
     }
-    
 }
 
 extension UserCursor : Content { }

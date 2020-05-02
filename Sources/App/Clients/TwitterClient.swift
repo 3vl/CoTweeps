@@ -7,11 +7,12 @@
 
 import Vapor
 
-class TwitterClient {
+class TwitterClient : Service {
     private let apiKey = "Bearer "
     var httpClient : Client
-    init(client : Client) {
-        self.httpClient = client
+    
+    init(_ container : Container) throws {
+        self.httpClient = try container.make(Client.self)
     }
     
     func followersOf(_ screenName : String) throws -> Future<UserCursor> {

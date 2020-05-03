@@ -18,8 +18,12 @@ struct FollowersView : Encodable {
 
 final class CoTweepsController {
     func followersOf(_ req : Request) throws -> Future<FollowersView> {
-        let twitter = try req.make(TwitterClient.self)
+        let logger = try req.make(Logger.self)
         let screenName = try req.parameters.next(String.self)
+
+        logger.debug("Request for followers of \(screenName)")
+        
+        let twitter = try req.make(TwitterClient.self)
         return try twitter.followersOf(screenName).map {userCursor in
                 FollowersView(screenName, userCursor)
         }

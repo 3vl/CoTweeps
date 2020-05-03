@@ -4,12 +4,12 @@ import Leaf
 /// Called before your application initializes.
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
     try services.register(LeafProvider())
-    
-    services.register(TwitterClient.self) { container -> TwitterClient in
-        return try TwitterClient(container)
-    }
     config.prefer(LeafRenderer.self, for: ViewRenderer.self)
 
+    services.register(TwitterClient.self) { container -> TwitterClient in
+        return try TwitterClient(container.make(Client.self), container.make(Logger.self))
+    }
+    
     // Register routes to the router
     let router = EngineRouter.default()
     try routes(router)

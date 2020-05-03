@@ -12,15 +12,19 @@ class TwitterClient : Service {
     var httpClient : Client
     
     let jsonDecoder : JSONDecoder
+    let logger : Logger
     
-    init(_ container : Container) throws {
+    init(_ client : Client, _ logger : Logger) throws {
         jsonDecoder = JSONDecoder()
         jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
         
-        self.httpClient = try container.make(Client.self)
+        self.logger = logger
+                
+        self.httpClient = client
     }
     
     func followersOf(_ screenName : String) throws -> Future<UserCursor> {
+        logger.debug("Fetching followers of \(screenName)")
         let res = httpClient.get("https://api.twitter.com/1.1/followers/list.json?screen_name=\(screenName)", headers: ["authorization": apiKey])
         return res.flatMap { res in
             return try res.content.decode(UserCursor.self, using: self.jsonDecoder)

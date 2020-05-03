@@ -8,7 +8,7 @@
 import Vapor
 
 class TwitterClient : Service {
-    private let apiKey = "Bearer "
+    private let authToken : String
     var httpClient : Client
     
     let jsonDecoder : JSONDecoder
@@ -18,6 +18,11 @@ class TwitterClient : Service {
         jsonDecoder = JSONDecoder()
         jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
         
+        guard let apiToken = Environment.get("TWITTER_TOKEN") else {
+            throw Abort(.internalServerError)
+        }
+        authToken =  "Bearer " + apiToken
+        
         self.logger = logger
                 
         self.httpClient = client
@@ -25,7 +30,7 @@ class TwitterClient : Service {
     
     func followersOf(_ screenName : String) throws -> Future<UserCursor> {
         logger.debug("Fetching followers of \(screenName)")
-        let res = httpClient.get("https://api.twitter.com/1.1/followers/list.json?screen_name=\(screenName)", headers: ["authorization": apiKey])
+        let res = httpClient.get("https://api.twitter.com/1.1/followers/list.json?screen_name=\(screenName)", headers: ["authorization": authToken])
         return res.flatMap { res in
             return try res.content.decode(UserCursor.self, using: self.jsonDecoder)
         }

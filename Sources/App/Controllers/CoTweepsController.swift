@@ -8,11 +8,11 @@ import Vapor
 
 struct FollowersView : Encodable {
     let screenName : String
-    let userCursor : UserCursor
+    let users : Set<User>
     
-    init(_ screenName : String, _ users : UserCursor) {
+    init(_ screenName : String, _ users : Set<User>) {
         self.screenName = screenName
-        self.userCursor = users
+        self.users = users
     }
 }
 
@@ -24,8 +24,13 @@ final class CoTweepsController {
         logger.debug("Request for followers of \(screenName)")
         
         let twitter = try req.make(TwitterClient.self)
-        return try twitter.followersOf(screenName).map {userCursor in
-                FollowersView(screenName, userCursor)
+        do {
+            return try twitter.fetchFollwers(of: screenName).map {users in
+                return FollowersView(screenName, users)
+            }
+        } catch {
+            print("Unexpected error: \(error).")
+            throw error;
         }
     }
 }

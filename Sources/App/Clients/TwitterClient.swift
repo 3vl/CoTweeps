@@ -13,6 +13,7 @@ class TwitterClient : Service {
     
     let jsonDecoder : JSONDecoder
     let logger : Logger
+    let eventLoop : EventLoop
     
     init(_ client : Client, _ logger : Logger) throws {
         jsonDecoder = JSONDecoder()
@@ -21,18 +22,35 @@ class TwitterClient : Service {
         guard let apiToken = Environment.get("TWITTER_TOKEN") else {
             throw Abort(.internalServerError)
         }
+        
         authToken =  "Bearer " + apiToken
         
         self.logger = logger
                 
         self.httpClient = client
+        
+        self.eventLoop = httpClient.container.eventLoop
     }
     
-    func followersOf(_ screenName : String) throws -> Future<UserCursor> {
-        logger.debug("Fetching followers of \(screenName)")
-        let res = httpClient.get("https://api.twitter.com/1.1/followers/list.json?screen_name=\(screenName)", headers: ["authorization": authToken])
+    private func _followers(of screenName : String, nextCursor : Int64 = -1) throws -> Future<UserCursor>{
+        logger.debug("Fetching followers of \(screenName) cursor \(nextCursor)")
+        let res = httpClient.get("https://api.twitter.com/1.1/followers/list.json?screen_name=\(screenName)&cursor=\(nextCursor)", headers: ["authorization": authToken])
         return res.flatMap { res in
             return try res.content.decode(UserCursor.self, using: self.jsonDecoder)
         }
+    }
+    
+    private func _followersFetcher(of screenName : String, nextCursor : Int64 = -1, users: Set<User> = []) throws -> Future<UserCursor> {
+        return try _followers(of: screenName, nextCursor: nextCursor).flatMap { userCursor in
+            let newUsers = users.union(userCursor.users)
+            if userCursor.nextCursor > 0 {
+                return try self._followersFetcher(of: screenName, nextCursor: userCursor.nextCursor, users: newUsers).map {$0}
+            }
+            return self.eventLoop.future(UserCursor(users: newUsers))
+        }
+    }
+    
+    func fetchFollwers(of screenName : String) throws -> Future<Set<User>> {
+        return try _followersFetcher(of: screenName).map{$0.users}
     }
 }

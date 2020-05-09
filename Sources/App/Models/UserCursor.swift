@@ -10,9 +10,9 @@ import Vapor
 final class UserCursor  {
     var nextCursor : Int64
     var previousCursor: Int64
-    var users : [User] 
+    var users : Set<User>
     
-    init(nextCursor : Int64, previousCursor : Int64, users : [User]) {
+    init(nextCursor : Int64 = -1, previousCursor : Int64 = -1, users : Set<User>) {
         self.nextCursor = nextCursor
         self.previousCursor = previousCursor
         self.users = users

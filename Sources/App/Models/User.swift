@@ -21,3 +21,12 @@ final class User {
 
 extension User : Content { }
 
+extension User : Hashable {
+    static func == (lhs: User, rhs: User) -> Bool {
+        return lhs.id == rhs.id
+    }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+

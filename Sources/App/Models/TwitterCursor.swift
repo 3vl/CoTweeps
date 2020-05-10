@@ -7,16 +7,16 @@
 
 import Vapor
 
-final class UserCursor  {
+final class TwitterCursor <T : Hashable & Content>  {
     var nextCursor : Int64
     var previousCursor: Int64
-    var users : Set<User>
+    var users : Set<T>
     
-    init(nextCursor : Int64 = -1, previousCursor : Int64 = -1, users : Set<User>) {
+    init(nextCursor : Int64 = -1, previousCursor : Int64 = -1, users : Set<T>) {
         self.nextCursor = nextCursor
         self.previousCursor = previousCursor
         self.users = users
     }
 }
 
-extension UserCursor : Content { }
+extension TwitterCursor : Content { }

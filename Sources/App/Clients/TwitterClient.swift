@@ -36,24 +36,24 @@ class TwitterClient : Service {
         return code > 199 && code < 300
     }
     
-    private func _followers(of screenName : String, nextCursor : Int64 = -1) throws -> Future<UserCursor>{
+    private func _followers(of screenName : String, nextCursor : Int64 = -1) throws -> Future<TwitterCursor<User>>{
         logger.debug("Fetching followers of \(screenName) cursor \(nextCursor)")
         let res = httpClient.get("https://api.twitter.com/1.1/followers/list.json?screen_name=\(screenName)&cursor=\(nextCursor)&count=200", headers: ["authorization": authToken])
         return res.flatMap { res in
             guard self.statusIsOK(res.http.status.code) else {
                 throw Abort(res.http.status, reason: res.http.status.reasonPhrase)
             }
-            return try res.content.decode(UserCursor.self, using: self.jsonDecoder)
+            return try res.content.decode(TwitterCursor.self, using: self.jsonDecoder)
         }
     }
     
-    private func _followersFetcher(of screenName : String, nextCursor : Int64 = -1, users: Set<User> = []) throws -> Future<UserCursor> {
+    private func _followersFetcher(of screenName : String, nextCursor : Int64 = -1, users: Set<User> = []) throws -> Future<TwitterCursor<User>> {
         return try _followers(of: screenName, nextCursor: nextCursor).flatMap { userCursor in
             let newUsers = users.union(userCursor.users)
             if userCursor.nextCursor > 0 {
                 return try self._followersFetcher(of: screenName, nextCursor: userCursor.nextCursor, users: newUsers).map {$0}
             }
-            return self.eventLoop.future(UserCursor(users: newUsers))
+            return self.eventLoop.future(TwitterCursor(users: newUsers))
         }
     }
     

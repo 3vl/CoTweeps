@@ -29,11 +29,13 @@ final class CoTweepsController {
         if let compareFollowers = try? req.query.get(String.self, at: "compareFollowers") {
             screenNames.append(compareFollowers)
             let otherFollowers = try twitter.fetchFollwers(of: compareFollowers)
-            followers = followers.and(otherFollowers).map({ (u1 : Set<User>, u2 : Set<User>) -> Set<User> in
+            followers = followers.and(otherFollowers).map() { (u1 : Set<Int64>, u2 : Set<Int64>) -> Set<Int64> in
                 u1.intersection(u2)
-            })
+            }
         }
-        return followers.map {users in
+        return followers.flatMap {ids in
+            try twitter.lookupUsers(userIds: ids)
+        }.map { users in
             return FollowersView(screenNames, users)
         }
     }

@@ -1,7 +1,7 @@
 #set("title") {
     Follower of
     #for(n in screenNames) {
-        #(n) #if(isFirst) { &amp; }
+        #if(!isFirst) { &amp; } #(n) 
     }
 }
 
@@ -15,7 +15,7 @@
     <body>
         <ul>
             #for(u in users) {
-                <li>@#(u.screenName) (#(u.id)) #(u.name)</li>
+                <li><a href="https://www.twitter.com/#(u.screenName)">@#(u.screenName)</a> (#(u.id)) #(u.name)</li>
             }
         </ul>
     </body>

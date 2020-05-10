@@ -20,7 +20,7 @@ class TwitterClient : Service {
         jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
         
         guard let apiToken = Environment.get("TWITTER_TOKEN") else {
-            throw Abort(.internalServerError)
+            throw Abort(.internalServerError, reason: "Mising env variable TWITTER_TOKEN")
         }
         
         authToken =  "Bearer " + apiToken
@@ -32,10 +32,17 @@ class TwitterClient : Service {
         self.eventLoop = httpClient.container.eventLoop
     }
     
+    private func statusIsOK(_ code : UInt) -> Bool {
+        return code > 199 && code < 300
+    }
+    
     private func _followers(of screenName : String, nextCursor : Int64 = -1) throws -> Future<UserCursor>{
         logger.debug("Fetching followers of \(screenName) cursor \(nextCursor)")
-        let res = httpClient.get("https://api.twitter.com/1.1/followers/list.json?screen_name=\(screenName)&cursor=\(nextCursor)", headers: ["authorization": authToken])
+        let res = httpClient.get("https://api.twitter.com/1.1/followers/list.json?screen_name=\(screenName)&cursor=\(nextCursor)&count=200", headers: ["authorization": authToken])
         return res.flatMap { res in
+            guard self.statusIsOK(res.http.status.code) else {
+                throw Abort(res.http.status, reason: res.http.status.reasonPhrase)
+            }
             return try res.content.decode(UserCursor.self, using: self.jsonDecoder)
         }
     }

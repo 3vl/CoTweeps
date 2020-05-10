@@ -1,16 +1,22 @@
+#set("title") {
+    Follower of
+    #for(n in screenNames) {
+        #(n) #if(isFirst) { &amp; }
+    }
+}
+
 <html>
     <head>
-        <title>Followers of #{screenName}</title>
+        <title>#get(title)</title>
+        <h1>
+            #get(title)
+        </h1>
     </head>
     <body>
-        <h1>#(screenName)</h1>
         <ul>
             #for(u in users) {
                 <li>@#(u.screenName) (#(u.id)) #(u.name)</li>
             }
         </ul>
-        <p>
-            #(userCursor.nextCursor)
-        </p>
     </body>
 </html>

@@ -6,7 +6,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     try services.register(LeafProvider())
     config.prefer(LeafRenderer.self, for: ViewRenderer.self)
 
-    services.register(TwitterRESTClient.self) { container -> TwitterRESTClient in
+    services.register(TwitterClient.self) { container in
         return try TwitterRESTClient(container.make(Client.self), container.make(Logger.self))
     }
     

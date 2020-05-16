@@ -7,12 +7,12 @@
 
 import Vapor
 
-final class User {
+final public class User {
     var id : Int64
     var name : String
     var screenName : String
     
-    init(id : Int64, name : String, screenName : String) {
+    public init(id : Int64, name : String, screenName : String) {
         self.id = id
         self.name = name
         self.screenName = screenName
@@ -22,10 +22,10 @@ final class User {
 extension User : Content { }
 
 extension User : Hashable {
-    static func == (lhs: User, rhs: User) -> Bool {
+    public static func == (lhs: User, rhs: User) -> Bool {
         return lhs.id == rhs.id
     }
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
 }

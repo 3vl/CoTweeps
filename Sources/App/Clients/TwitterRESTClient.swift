@@ -7,7 +7,7 @@
 
 import Vapor
 
-class TwitterRESTClient : Service {
+class TwitterRESTClient : TwitterClient {
     private let authToken : String
     var httpClient : Client
     

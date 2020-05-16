@@ -6,8 +6,8 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     try services.register(LeafProvider())
     config.prefer(LeafRenderer.self, for: ViewRenderer.self)
 
-    services.register(TwitterClient.self) { container -> TwitterClient in
-        return try TwitterClient(container.make(Client.self), container.make(Logger.self))
+    services.register(TwitterRESTClient.self) { container -> TwitterRESTClient in
+        return try TwitterRESTClient(container.make(Client.self), container.make(Logger.self))
     }
     
     // Register routes to the router

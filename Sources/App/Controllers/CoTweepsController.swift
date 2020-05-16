@@ -23,7 +23,7 @@ final class CoTweepsController {
     
         logger.debug("Request for followers of \(screenName)")
         
-        let twitter = try req.make(TwitterClient.self)
+        let twitter = try req.make(TwitterRESTClient.self)
         var followers = try twitter.fetchFollwers(of: screenName);
         var screenNames = [screenName]
         if let compareFollowers = try? req.query.get(String.self, at: "compareFollowers") {

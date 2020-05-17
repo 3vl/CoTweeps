@@ -13,5 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - run: swift test --enable-test-discovery --sanitize=thread
+    - name: Install libssl-dev
+      run: sudo apt-get install libssl-dev      
+    - name: Run Tests
+      run: swift test --enable-test-discovery --sanitize=thread
   

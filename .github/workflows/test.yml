@@ -13,9 +13,7 @@ jobs:
 
     steps:
     - name: Install Vapor      
-      uses: artemnovichkov/action-homebrew@master
-      with: 
-       arg: install vapor
+      run: homebrew install vapor
     - uses: actions/checkout@v2 
     - name: Build
       run: vapor build -v

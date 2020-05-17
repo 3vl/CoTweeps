@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - name: Install Vapor      
-      run: brew install vapor
+      run: brew cask install vapor && brew install vapor
     - uses: actions/checkout@v2 
     - name: Build
       run: vapor build -v

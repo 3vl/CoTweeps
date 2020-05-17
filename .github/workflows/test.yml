@@ -14,8 +14,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install Vapor
-      run: |
-        homebrew install vapor
+      uses: artemnovichkov/action-homebrew@0.1.0 |
+      arg: install vapor
     - name: Build
       run: vapor build -v
     - name: Run tests
